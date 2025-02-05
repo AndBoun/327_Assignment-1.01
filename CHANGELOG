@@ -1,3 +1,21 @@
+commit dbfa6dde98d26cf4a3b062fe7af1f0c8318af6ab
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Wed Feb 5 03:06:17 2025 -0600
+
+    Refactor room management to use dynamic memory allocation for rooms
+
+commit 8eb8cfd673ebfe759f22931709757458b2e3dc65
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Wed Feb 5 01:16:38 2025 -0600
+
+    Fix typo in comment for diagonal movement in corridor generation
+
+commit 52594edd4c2b4dd05caf2079367757a72f7b8e62
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Wed Feb 5 01:03:33 2025 -0600
+
+    Remove outdated README and add a new one with project details and usage instructions
+
 commit d37345c452d74db938716d75b44a3f42ddb42521
 Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
 Date:   Wed Feb 5 00:47:09 2025 -0600
