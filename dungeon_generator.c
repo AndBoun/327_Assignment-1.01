@@ -7,14 +7,16 @@
 #include <time.h>
 #include <stdbool.h>
 
+// Character definitions for the dungeon grid
 #define ROCK ' '
 #define FLOOR '.'
 #define CORRIDOR '#'
 #define DOWN_STAIRS '>'
 #define UP_STAIRS '<'
 
+// Border characters for the dungeon grid
 #define HORIZONTAL_BORDER '-'
-#define VERTICAL_BORDER '|' // vertical border
+#define VERTICAL_BORDER '|'
 
 #define DUNGEON_WIDTH 80
 #define DUNGEON_HEIGHT 21
@@ -27,6 +29,11 @@
 
 #define MIN_ROOM_WIDTH 4
 #define MIN_ROOM_HEIGHT 3
+
+#define MIN_DOWN_STAIRS 1
+#define MAX_DOWN_STAIRS 4
+#define MIN_UP_STAIRS 1
+#define MAX_UP_STAIRS 4
 
 // Maximum number of attempts to generate a room
 // If the number of attempts exceeds this value,
@@ -46,6 +53,24 @@ Room rooms[MAX_ROOMS];
 char grid[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
 
+/**
+ * Generates a corridor between two points in the dungeon grid.
+ * The corridor can be horizontal, vertical, or diagonal based on random selection.
+ * 
+ * @param x1 The starting x-coordinate of the corridor
+ * @param y1 The starting y-coordinate of the corridor
+ * @param x2 The ending x-coordinate of the corridor
+ * @param y2 The ending y-coordinate of the corridor
+ * 
+ * The function updates the global 'grid' array, converting ROCK cells to CORRIDOR
+ * cells along the path. For diagonal movements, it ensures connectivity by adding
+ * additional corridor cells when necessary.
+ * 
+ * Direction values:
+ * 0 - horizontal movement
+ * 1 - vertical movement
+ * 2 - diagonal movement
+ */
 void generate_corridor(int x1, int y1, int x2, int y2){
     int x = x1;
     int y = y1;
@@ -64,16 +89,12 @@ void generate_corridor(int x1, int y1, int x2, int y2){
             else y--;
 
         } else {
-            // if (x < x2){
-            //     x++;
-            // } else if (x > x2){
-            //     x--;
-            // }
-
             if (x != x2){
                 if (x < x2) x++;
                 else x--;
 
+                // Ensure diagoanl movement is possible by only
+                // up and down movements by adding an extra corridor
                 if (grid[y][x] == ROCK) grid[y][x] = CORRIDOR;
             }
 
@@ -88,10 +109,22 @@ void generate_corridor(int x1, int y1, int x2, int y2){
     }
 }
 
+/**
+ * Determines if a room can be placed at the specified location in the grid.
+ * 
+ * @param room The room structure containing x,y coordinates, width and height
+ * @return 1 if room can be inserted, 0 otherwise
+ * 
+ * Checks two conditions:
+ * 1. If the room dimensions would exceed the placeable grid boundaries
+ * 2. If the room area (including 1-tile border) would overlap with existing floor tiles
+ */
 int can_insert_room(Room room){
+
     // Check if room is within bounds
-    // Do not check for <= because we need to account for starting at 1
-    if (room.x + (room.width - 1) > PLACABLE_WIDTH || room.y + (room.height - 1) > PLACABLE_HEIGHT){ // -1 to account for starting room at that index
+    // Do not check for '(x + width - 1) >= PLACEABLE' because we need to account for starting at 1
+    // (room.width - 1) and (room.height - 1) to account for starting room at that index (x, y) inclusive
+    if (room.x + (room.width - 1) > PLACABLE_WIDTH || room.y + (room.height - 1) > PLACABLE_HEIGHT){ 
         return 0;
     }
 
@@ -99,16 +132,31 @@ int can_insert_room(Room room){
     for (int i = room.x - 1; i < room.x + room.width + 1; i++){
         for (int j = room.y - 1; j < room.y + room.height + 1; j++){
             if (grid[j][i] == FLOOR){
-                return 0;
+                return 0; // Room overlaps with existing floor tiles
             }
         }
     }
 
-    return 1;
+    return 1; // Room can be inserted
 }
 
-// Generate room in grid, to only be called after can_insert_room
-// This generates the room starting from it's top left corner, and including that initial point
+/**
+ * @brief Generates a room in the grid by filling it with floor tiles
+ * 
+ * Given a Room struct containing the position (x,y) and dimensions (width, height),
+ * this function fills the corresponding grid cells with FLOOR characters.
+ * The room is generated from its top-left corner (inclusive) to its bottom-right corner.
+ * 
+ * @param room A Room struct containing:
+ *             - x: The x-coordinate of the top-left corner
+ *             - y: The y-coordinate of the top-left corner
+ *             - width: The width of the room
+ *             - height: The height of the room
+ * 
+ * @pre The room must fit within the grid boundaries
+ * @pre can_insert_room must return true for the given room
+ * @pre grid must be properly initialized
+ */
 void generate_room(Room room){
     for(int i = room.x; i < room.x + room.width; i++){
         for(int j = room.y; j < room.y + room.height; j++){
@@ -117,10 +165,21 @@ void generate_room(Room room){
     }
 }
 
-// Generate a random room
-// Returns true if room was generated successfully
-// Returns false if room could not be generated
-// idx is the index of the room in the rooms array
+/**
+ * @brief Generates a random room with random dimensions and position
+ * 
+ * This function attempts to generate a random room within the dungeon grid.
+ * It will make multiple attempts to place a room without overlapping existing rooms.
+ * If too many attempts are made (MAX_ATTEMPTS), the function fails.
+ * 
+ * The room dimensions are randomly generated but must meet minimum size requirements
+ * (MIN_ROOM_WIDTH and MIN_ROOM_HEIGHT). The room position is randomly placed within
+ * the PLACABLE_WIDTH and PLACABLE_HEIGHT bounds.
+ * 
+ * @param idx Index where the generated room should be stored in the rooms array
+ * @return true if room was successfully generated and placed
+ * @return false if room could not be placed after maximum attempts
+ */
 bool generate_random_room(int idx){
     srand(time(NULL));
     Room room;
@@ -150,6 +209,17 @@ bool generate_random_room(int idx){
     rooms[idx] = room;
     generate_room(room);
     return true;
+}
+
+int generate_random_stair(char stair){
+    int x, y;
+    do {
+        x = (rand() % PLACABLE_WIDTH) + 1;
+        y = (rand() % PLACABLE_HEIGHT) + 1;
+    } while (grid[y][x] == ROCK);
+
+    grid[y][x] = stair;
+    return 1;
 }
 
 void print_room_info(int num_rooms){
@@ -204,17 +274,25 @@ int main (int argc, char *argv[]){
             }
         }
 
+        // Assume a successful room generation
         success = true;
+
+        // Generate a random number of rooms to generate
         num_rooms = MIN_ROOMS + rand() % (MAX_ROOMS - MIN_ROOMS + 1);
 
+        // Generate rooms
         for (i = 0; i < num_rooms; i++) {
+
+            // If attempt limit is reached, reset grid and try again
             if (!generate_random_room(i)) {
                 success = false;
                 break;
             }
         }
 
+        // If rooms were generated successfully, break out of loop
         if (success) break;
+
     } while (1);
 
     // Generate Corridors
@@ -227,12 +305,17 @@ int main (int argc, char *argv[]){
         );
     }
 
-    generate_corridor(
-        rooms[num_rooms - 1].center_x, 
-        rooms[num_rooms - 1].center_y, 
-        rooms[0].center_x, 
-        rooms[0].center_y
-    );
+    // Generate Stairs
+    int num_up_stairs = MIN_UP_STAIRS + rand() % (MAX_UP_STAIRS - MIN_UP_STAIRS + 1);
+    for (i = 0; i < num_up_stairs; i++){
+        generate_random_stair(UP_STAIRS);
+    }
+
+    int num_down_stairs = MIN_DOWN_STAIRS + rand() % (MAX_DOWN_STAIRS - MIN_DOWN_STAIRS + 1);
+    for (i = 0; i < num_down_stairs; i++){
+        generate_random_stair(DOWN_STAIRS);
+    }
+
 
     // print_room_info(num_rooms);
     
