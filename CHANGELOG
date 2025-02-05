@@ -1,0 +1,59 @@
+commit d37345c452d74db938716d75b44a3f42ddb42521
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Wed Feb 5 00:47:09 2025 -0600
+
+    Write README
+
+commit 5aa2fa86aca3c6288b764cebff8d2b435728ad21
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Wed Feb 5 00:05:12 2025 -0600
+
+    Added random stair generation
+
+commit 74df25039b0f1b269bf8feb688d9ff7409c78da7
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Tue Feb 4 23:42:08 2025 -0600
+
+    Fix diagonal corridors
+
+commit 6c4c49783f03d92e1e734af12fd89d98f0564160
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Tue Feb 4 23:37:08 2025 -0600
+
+    Implement Corridor generation
+
+commit fe2fac3bf79872f9b750bb9eda5e01ce54ec33a2
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Tue Feb 4 22:13:23 2025 -0600
+
+    Implemented an attempt limit for random room generation to prevent the program from executing too long
+
+commit 69f40bb2a6244802ef82c9e948cd32028b81dff6
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Tue Feb 4 21:52:39 2025 -0600
+
+    Implement random room generation
+
+commit 92d5d578b323de20e04bf6047b4042db97c8dba5
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Tue Feb 4 15:15:32 2025 -0600
+
+    Fix and added more global constants. Added a shuffle function and print grid function
+
+commit 73ef1ee53bcbc387223cc319081a0d3d4a64290d
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Tue Feb 4 14:37:22 2025 -0600
+
+    Define global variable constants
+
+commit 96a8b18076c813871a61e197616aa3a83bff33d0
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Mon Feb 3 18:40:00 2025 -0600
+
+    Add initial project files with Makefile and dungeon generator source
+
+commit 371b8339cc059b6afa134c0050a200df647cef70
+Author: Andrew Boun <167598896+AndBoun@users.noreply.github.com>
+Date:   Mon Feb 3 18:38:03 2025 -0600
+
+    Initial commit
