@@ -47,7 +47,8 @@ typedef struct {
 } Room;
 
 // Array of rooms
-Room rooms[MAX_ROOMS];
+// Room rooms[MAX_ROOMS];
+Room* rooms;
 
 // Dungeon Grid
 char grid[DUNGEON_HEIGHT][DUNGEON_WIDTH];
@@ -181,7 +182,7 @@ void generate_room(Room room){
  * @return false if room could not be placed after maximum attempts
  */
 bool generate_random_room(int idx){
-    srand(time(NULL));
+    // srand(time(NULL));
     Room room;
     int attempts = 0;
 
@@ -279,6 +280,8 @@ int main (int argc, char *argv[]){
 
         // Generate a random number of rooms to generate
         num_rooms = MIN_ROOMS + rand() % (MAX_ROOMS - MIN_ROOMS + 1);
+        // printf("Number of rooms: %d\n", num_rooms);
+        rooms = malloc(num_rooms * sizeof(Room));
 
         // Generate rooms
         for (i = 0; i < num_rooms; i++) {
@@ -321,5 +324,6 @@ int main (int argc, char *argv[]){
     
     print_grid();
 
+    free(rooms);
     return 0;
 }
