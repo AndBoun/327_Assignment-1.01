@@ -1,3 +1,15 @@
+commit c8afdf90e11f232171a9cbc1281346ecca4e73a5
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Wed Feb 5 03:34:43 2025 -0600
+
+    Increase maximum rooms from 12 to 20 and update random number generator seeding method
+
+commit 56824e3de74e59d17bdfbacf0a6d64e862663e46
+Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
+Date:   Wed Feb 5 03:07:06 2025 -0600
+
+    Update CHANGELOG with recent commit history
+
 commit dbfa6dde98d26cf4a3b062fe7af1f0c8318af6ab
 Author: AndBoun <167598896+AndBoun@users.noreply.github.com>
 Date:   Wed Feb 5 03:06:17 2025 -0600
