@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 #define ROCK " "
 
@@ -24,9 +25,15 @@
 #define PLACABLE_WIDTH (DUNGEON_WIDTH - 2)
 
 #define MIN_ROOMS 6
+#define MAX_ROOMS 20
 
 #define MIN_ROOM_WIDTH 4
 #define MIN_ROOM_HEIGHT 3
+
+// Maximum number of attempts to generate a room
+// If the number of attempts exceeds this value,
+// The grid will reset and try again
+#define MAX_ATTEMPTS 2000
 
 
 // Dungeon Grid
@@ -105,17 +112,20 @@ void generate_room(int x, int y, int width, int height){
         }
     }
 }
-void generate_random_room(){
+bool generate_random_room(){
     srand(time(NULL));
     int x, y, width, height;
-    // c = 0;
+    int attempts = 0;
 
     do {
-        // Randomize and start at idx 1 to avoid border
+        attempts++;
+        if (attempts >= MAX_ATTEMPTS) {
+            return false;
+        }
+
         x = (rand() % PLACABLE_WIDTH) + 1;
         y = (rand() % PLACABLE_HEIGHT) + 1;
 
-        // Randomize width and height, and set to min if less than min
         int random_width = rand() % PLACABLE_WIDTH;
         int random_height = rand() % PLACABLE_HEIGHT;
         width = (random_width > MIN_ROOM_WIDTH) ? random_width : MIN_ROOM_WIDTH;
@@ -123,54 +133,79 @@ void generate_random_room(){
 
     } while (!can_insert_room(x, y, width, height));
 
-
-    // Insert room into grid once valid parameters are found
     generate_room(x, y, width, height);
+    return true;
 }
 
 
 
 int main (int argc, char *argv[]){
+    srand(time(NULL));
     int i, j;
     
-    // Initialize grid with '~' for debuggin
-    for (i = 0; i < DUNGEON_HEIGHT; i++) {
-        for (j = 0; j < DUNGEON_WIDTH; j++) {
-            grid[i][j] = '~';
+    // // Initialize grid with '~' for debugging
+    // for (i = 0; i < DUNGEON_HEIGHT; i++) {
+    //     for (j = 0; j < DUNGEON_WIDTH; j++) {
+    //         grid[i][j] = '~';
+    //     }
+    // }
+
+    // int num_rooms = (rand() % MAX_ROOMS + 1);
+    // num_rooms = (num_rooms < MIN_ROOMS) ? MIN_ROOMS : num_rooms;
+
+    // for (i = 0; i < num_rooms; i++){
+    //     generate_random_room();
+    // }
+
+    bool success = false;
+
+    do {
+        // Initialize grid with '~' for debugging
+        for (i = 0; i < DUNGEON_HEIGHT; i++) {
+            for (j = 0; j < DUNGEON_WIDTH; j++) {
+                grid[i][j] = '~';
+            }
         }
-    }
 
-    // generate_random_room();
-    // generate_random_room();
-    // generate_random_room();
-    // generate_random_room();
-    // generate_random_room();
-    // generate_random_room();
+        success = true;
+        int num_rooms = (rand() % MAX_ROOMS + 1);
+        num_rooms = (num_rooms < MIN_ROOMS) ? MIN_ROOMS : num_rooms;
 
-    if (can_insert_room(1, 1, 4, 3))
-    {
-        generate_room(1, 1, 4, 3);
-    }
+        for (i = 0; i < num_rooms; i++) {
+            if (!generate_random_room()) {
+                success = false;
+                break;
+            }
+        }
 
-    if (can_insert_room(5, 1, 4, 3))
-    {
-        generate_room(5, 1, 4, 3);
-    }
+        if (success) break;
+    } while (1);
 
-    if (can_insert_room(75, 1, 4, 3))
-    {
-        generate_room(75, 1, 4, 3);
-    }
 
-    if (can_insert_room(1, 17, 4, 3))
-    {
-        generate_room(1, 17, 4, 3);
-    }
+    // if (can_insert_room(1, 1, 4, 3))
+    // {
+    //     generate_room(1, 1, 4, 3);
+    // }
 
-    if (can_insert_room(75, 17, 4, 3))
-    {
-        generate_room(75, 17, 4, 3);
-    }
+    // if (can_insert_room(5, 1, 4, 3))
+    // {
+    //     generate_room(5, 1, 4, 3);
+    // }
+
+    // if (can_insert_room(75, 1, 4, 3))
+    // {
+    //     generate_room(75, 1, 4, 3);
+    // }
+
+    // if (can_insert_room(1, 17, 4, 3))
+    // {
+    //     generate_room(1, 17, 4, 3);
+    // }
+
+    // if (can_insert_room(75, 17, 4, 3))
+    // {
+    //     generate_room(75, 17, 4, 3);
+    // }
     
 
     
