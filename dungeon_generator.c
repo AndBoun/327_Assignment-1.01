@@ -93,7 +93,7 @@ void generate_corridor(int x1, int y1, int x2, int y2){
                 if (x < x2) x++;
                 else x--;
 
-                // Ensure diagoanl movement is possible by only
+                // Ensure diagonal movement is possible by only
                 // up and down movements by adding an extra corridor
                 if (grid[y][x] == ROCK) grid[y][x] = CORRIDOR;
             }
