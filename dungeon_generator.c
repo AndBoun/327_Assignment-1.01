@@ -4,8 +4,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <stdbool.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 // Character definitions for the dungeon grid
 #define ROCK ' '
@@ -25,7 +26,7 @@
 #define PLACABLE_WIDTH (DUNGEON_WIDTH - 2)
 
 #define MIN_ROOMS 6
-#define MAX_ROOMS 12
+#define MAX_ROOMS 20
 
 #define MIN_ROOM_WIDTH 4
 #define MIN_ROOM_HEIGHT 3
@@ -76,7 +77,6 @@ void generate_corridor(int x1, int y1, int x2, int y2){
     int x = x1;
     int y = y1;
 
-    srand(time(NULL));
     // 0 for horizontal, 1 for vertical, 2 for diagonal
     int direction = rand() % 3;
 
@@ -182,7 +182,6 @@ void generate_room(Room room){
  * @return false if room could not be placed after maximum attempts
  */
 bool generate_random_room(int idx){
-    // srand(time(NULL));
     Room room;
     int attempts = 0;
 
@@ -259,9 +258,17 @@ void print_grid(){
 }
 
 int main (int argc, char *argv[]){
-    srand(time(NULL));
+    // srand(time(NULL));
+
+    // Seed random number generator
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    srand(tv.tv_usec ^ getpid());
     int i, j;
     int num_rooms;
+
+    // Discard first random value
+    rand();
 
     bool success = false;
 
