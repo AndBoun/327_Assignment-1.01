@@ -64,10 +64,17 @@ void generate_corridor(int x1, int y1, int x2, int y2){
             else y--;
 
         } else {
-            if (x < x2){
-                x++;
-            } else if (x > x2){
-                x--;
+            // if (x < x2){
+            //     x++;
+            // } else if (x > x2){
+            //     x--;
+            // }
+
+            if (x != x2){
+                if (x < x2) x++;
+                else x--;
+
+                if (grid[y][x] == ROCK) grid[y][x] = CORRIDOR;
             }
 
             if (y < y2){
