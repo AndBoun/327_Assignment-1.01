@@ -36,6 +36,7 @@ char grid[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 int x_coordinates[PLACABLE_WIDTH];
 int y_coordinates[PLACABLE_HEIGHT];
 
+// Fisher-Yates shuffle algorithm to shuffle coordinates
 void randomizedCoordinates(){
     srand(time(NULL));
 
@@ -76,15 +77,104 @@ void print_grid(){
     printf("\n");
 }
 
-int main (int argc, char *argv[]){
-    int i, j;
-    for (i = 0; i < DUNGEON_HEIGHT; i++) {
-        for (j = 0; j < DUNGEON_WIDTH; j++) {
-            grid[i][j] = ' ';
+int can_insert_room(int x, int y, int width, int height){
+    // Check if room is within bounds
+    // Do not check for <= because we need to account for starting at 1
+    if (x + (width - 1) > PLACABLE_WIDTH || y + (height - 1) > PLACABLE_HEIGHT){ // -1 to account for starting room at that index
+        return 0;
+    }
+
+    // Check area of room and bordering area to see if it is empty
+    for (int i = x - 1; i < x + width + 1; i++){
+        for (int j = y - 1; j < y + height + 1; j++){
+            if (grid[j][i] == '.'){
+                return 0;
+            }
         }
     }
+
+    return 1;
+}
+
+// Generate room in grid, to only be called after can_insert_room
+// This generates the room starting from it's top left corner, and including that initial point
+void generate_room(int x, int y, int width, int height){
+    for(int i = x; i < x + width; i++){
+        for(int j = y; j < y + height; j++){
+            grid[j][i] = '.';
+        }
+    }
+}
+void generate_random_room(){
+    srand(time(NULL));
+    int x, y, width, height;
+    // c = 0;
+
+    do {
+        // Randomize and start at idx 1 to avoid border
+        x = (rand() % PLACABLE_WIDTH) + 1;
+        y = (rand() % PLACABLE_HEIGHT) + 1;
+
+        // Randomize width and height, and set to min if less than min
+        int random_width = rand() % PLACABLE_WIDTH;
+        int random_height = rand() % PLACABLE_HEIGHT;
+        width = (random_width > MIN_ROOM_WIDTH) ? random_width : MIN_ROOM_WIDTH;
+        height = (random_height > MIN_ROOM_HEIGHT) ? random_height : MIN_ROOM_HEIGHT;
+
+    } while (!can_insert_room(x, y, width, height));
+
+
+    // Insert room into grid once valid parameters are found
+    generate_room(x, y, width, height);
+}
+
+
+
+int main (int argc, char *argv[]){
+    int i, j;
+    
+    // Initialize grid with '~' for debuggin
+    for (i = 0; i < DUNGEON_HEIGHT; i++) {
+        for (j = 0; j < DUNGEON_WIDTH; j++) {
+            grid[i][j] = '~';
+        }
+    }
+
+    // generate_random_room();
+    // generate_random_room();
+    // generate_random_room();
+    // generate_random_room();
+    // generate_random_room();
+    // generate_random_room();
+
+    if (can_insert_room(1, 1, 4, 3))
+    {
+        generate_room(1, 1, 4, 3);
+    }
+
+    if (can_insert_room(5, 1, 4, 3))
+    {
+        generate_room(5, 1, 4, 3);
+    }
+
+    if (can_insert_room(75, 1, 4, 3))
+    {
+        generate_room(75, 1, 4, 3);
+    }
+
+    if (can_insert_room(1, 17, 4, 3))
+    {
+        generate_room(1, 17, 4, 3);
+    }
+
+    if (can_insert_room(75, 17, 4, 3))
+    {
+        generate_room(75, 17, 4, 3);
+    }
+    
+
     
     print_grid();
 
     return 0;
-}   
+}
