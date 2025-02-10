@@ -309,6 +309,9 @@ int main (int argc, char *argv[]){
                 // grid[i][j] = '~';
                 grid[i][j].type = ROCK;
                 grid[i][j].hardness = rand() % (MAX_HARDNESS - MIN_HARDNESS + 1);
+                if (i == 0 || i == DUNGEON_HEIGHT - 1 || j == 0 || j == DUNGEON_WIDTH - 1) {
+                    grid[i][j].hardness = MAX_HARDNESS;
+                }
             }
         }
 
