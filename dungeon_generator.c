@@ -26,7 +26,7 @@
 #define PLACABLE_WIDTH (DUNGEON_WIDTH - 2)
 
 #define MIN_ROOMS 6
-#define MAX_ROOMS 20
+#define MAX_ROOMS 120
 
 #define MIN_ROOM_WIDTH 4
 #define MIN_ROOM_HEIGHT 3
