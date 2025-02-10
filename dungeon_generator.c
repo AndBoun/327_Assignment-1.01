@@ -196,8 +196,11 @@ bool generate_random_room(int idx){
 
         // Subract current coordinate from the maximum width and height
         // to get the maximum available width and height
-        int random_width = rand() % (PLACABLE_WIDTH - room.x);
-        int random_height = rand() % (PLACABLE_HEIGHT - room.y);
+        int max_width = PLACABLE_WIDTH - room.x;
+        int max_height = PLACABLE_HEIGHT - room.y;
+        
+        int random_width = (max_width > 0) ? (rand() % max_width) : MIN_ROOM_WIDTH;
+        int random_height = (max_height > 0) ? (rand() % max_height) : MIN_ROOM_HEIGHT;
         room.width = (random_width < MIN_ROOM_WIDTH) ? MIN_ROOM_WIDTH : random_width;
         room.height = (random_height < MIN_ROOM_HEIGHT) ? MIN_ROOM_HEIGHT : random_height;
 
