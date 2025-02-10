@@ -36,6 +36,9 @@
 #define MIN_UP_STAIRS 1
 #define MAX_UP_STAIRS 4
 
+#define MIN_HARDNESS 0
+#define MAX_HARDNESS 255
+
 // Maximum number of attempts to generate a room
 // If the number of attempts exceeds this value,
 // The grid will reset and try again
@@ -51,8 +54,13 @@ typedef struct {
 // Room rooms[MAX_ROOMS];
 Room* rooms;
 
+typedef struct {
+    int hardness;
+    char type;
+} floor_tile;
+
 // Dungeon Grid
-char grid[DUNGEON_HEIGHT][DUNGEON_WIDTH];
+floor_tile grid[DUNGEON_HEIGHT][DUNGEON_WIDTH];
 
 
 /**
@@ -96,7 +104,11 @@ void generate_corridor(int x1, int y1, int x2, int y2){
 
                 // Ensure diagonal movement is possible by only
                 // up and down movements by adding an extra corridor
-                if (grid[y][x] == ROCK) grid[y][x] = CORRIDOR;
+                if (grid[y][x].type == ROCK) {
+                    grid[y][x].type = CORRIDOR;
+                    grid[y][x].hardness = MIN_HARDNESS;
+                }
+                
             }
 
             if (y < y2){
@@ -106,7 +118,10 @@ void generate_corridor(int x1, int y1, int x2, int y2){
             }
         }
 
-        if (grid[y][x] == ROCK) grid[y][x] = CORRIDOR;
+        if (grid[y][x].type == ROCK) {
+            grid[y][x].type = CORRIDOR;
+            grid[y][x].hardness = MIN_HARDNESS;
+        }
     }
 }
 
@@ -132,7 +147,7 @@ int can_insert_room(Room room){
     // Check area of room and bordering area to see if it is empty
     for (int i = room.x - 1; i < room.x + room.width + 1; i++){
         for (int j = room.y - 1; j < room.y + room.height + 1; j++){
-            if (grid[j][i] == FLOOR){
+            if (grid[j][i].type == FLOOR){
                 return 0; // Room overlaps with existing floor tiles
             }
         }
@@ -161,7 +176,8 @@ int can_insert_room(Room room){
 void generate_room(Room room){
     for(int i = room.x; i < room.x + room.width; i++){
         for(int j = room.y; j < room.y + room.height; j++){
-            grid[j][i] = FLOOR;
+            grid[j][i].type = FLOOR;
+            grid[j][i].hardness = MIN_HARDNESS;
         }
     }
 }
@@ -198,7 +214,7 @@ bool generate_random_room(int idx){
         // to get the maximum available width and height
         int max_width = PLACABLE_WIDTH - room.x;
         int max_height = PLACABLE_HEIGHT - room.y;
-        
+
         int random_width = (max_width > 0) ? (rand() % max_width) : MIN_ROOM_WIDTH;
         int random_height = (max_height > 0) ? (rand() % max_height) : MIN_ROOM_HEIGHT;
         room.width = (random_width < MIN_ROOM_WIDTH) ? MIN_ROOM_WIDTH : random_width;
@@ -219,9 +235,10 @@ int generate_random_stair(char stair){
     do {
         x = (rand() % PLACABLE_WIDTH) + 1;
         y = (rand() % PLACABLE_HEIGHT) + 1;
-    } while (grid[y][x] == ROCK);
+    } while (grid[y][x].type == ROCK);
 
-    grid[y][x] = stair;
+    grid[y][x].type =  stair;
+    grid[y][x].hardness = MIN_HARDNESS;
     return 1;
 }
 
@@ -238,6 +255,15 @@ void print_room_info(int num_rooms){
     }
 }
 
+void print_hardness_info(){
+    for (int i = 0; i < DUNGEON_HEIGHT; i++){
+        for (int j = 0; j < DUNGEON_WIDTH; j++){
+            printf("%d ", grid[i][j].hardness);
+        }
+        printf("\n");
+    }
+}
+
 // Prints grid with a border
 void print_grid(){
     for(int i = 0; i < DUNGEON_WIDTH + 2; i++){
@@ -248,7 +274,7 @@ void print_grid(){
     for (int i = 0; i < DUNGEON_HEIGHT; i++){
         printf("%c", VERTICAL_BORDER);
         for (int j = 0; j < DUNGEON_WIDTH; j++){
-            printf("%c", grid[i][j]);
+            printf("%c", grid[i][j].type);
         }
         printf("%c", VERTICAL_BORDER);
         printf("\n");
@@ -281,7 +307,8 @@ int main (int argc, char *argv[]){
         for (i = 0; i < DUNGEON_HEIGHT; i++) {
             for (j = 0; j < DUNGEON_WIDTH; j++) {
                 // grid[i][j] = '~';
-                grid[i][j] = ROCK;
+                grid[i][j].type = ROCK;
+                grid[i][j].hardness = rand() % (MAX_HARDNESS - MIN_HARDNESS + 1);
             }
         }
 
@@ -333,6 +360,7 @@ int main (int argc, char *argv[]){
     // print_room_info(num_rooms);
     
     print_grid();
+
 
     free(rooms);
     return 0;
